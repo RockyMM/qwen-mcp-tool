@@ -177,5 +177,5 @@ what critical paths lack test coverage?
 1. **Start Broad, Then Narrow**: Begin with overview, then dive into specifics
 2. **Combine Related Files**: Include configs with source code
 3. **Ask Follow-up Questions**: Build on previous responses
-4. **Use Specific Criteria**: Tell Gemini what to look for
+4. **Use Specific Criteria**: Tell Qwen what to look for
 5. **Iterate on Solutions**: Refine based on suggestions

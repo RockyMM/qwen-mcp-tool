@@ -22,41 +22,41 @@ export const generateCodeTool: UnifiedTool = {
   prompt: {
     description: "Generate code from a natural language task description",
   },
-  category: 'gemini',
+  category: 'qwen',
   execute: async (args, onProgress) => {
     const { task, language, framework, requirements, model } = args;
-    
+
     if (!task || (typeof task === 'string' && !task.trim())) {
       throw new Error("You must provide a coding task to perform");
     }
-    
+
     let prompt = `# CODE GENERATION REQUEST
 
 ## Task
 ${task}
 `;
-    
+
     if (language) {
       prompt += `
 ## Language
 ${language}
 `;
     }
-    
+
     if (framework) {
       prompt += `
 ## Framework/Library
 ${framework}
 `;
     }
-    
+
     if (requirements) {
       prompt += `
 ## Requirements/Constraints
 ${requirements}
 `;
     }
-    
+
     prompt += `
 ## Instructions
 Please generate clean, well-documented code to accomplish the task above. Include:
@@ -66,13 +66,13 @@ Please generate clean, well-documented code to accomplish the task above. Includ
 4. Comments explaining key parts of the code
 
 Follow best practices for the chosen language and framework. Ensure the code is production-ready and follows common conventions.`;
-    
+
     // Report progress to user
     onProgress?.(`Generating code for: ${task}...`);
-    
+
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.GEMINI_RESPONSE}
+    return `${STATUS_MESSAGES.QWEN_RESPONSE}
 ${result}`;
   }
 };
@@ -93,14 +93,14 @@ export const reviewCodeTool: UnifiedTool = {
   prompt: {
     description: "Review code for issues and improvements",
   },
-  category: 'gemini',
+  category: 'qwen',
   execute: async (args, onProgress) => {
     const { code, language, focus, styleGuide, model } = args;
-    
+
     if (!code || (typeof code === 'string' && !code.trim())) {
       throw new Error("You must provide code to review");
     }
-    
+
     let prompt = `# CODE REVIEW REQUEST
 
 ## Code to Review
@@ -108,19 +108,19 @@ export const reviewCodeTool: UnifiedTool = {
 ${code}
 \`\`\`
 `;
-    
+
     prompt += `
 ## Review Focus
 ${focus}
 `;
-    
+
     if (styleGuide) {
       prompt += `
 ## Style Guide
 ${styleGuide}
 `;
     }
-    
+
     prompt += `
 ## Instructions
 Please perform a comprehensive review of the code above. Address the following:
@@ -136,13 +136,13 @@ For each issue found, provide:
 - A suggested fix or improvement
 
 If the code is good and you find no issues in the specified focus areas, please state that clearly.`;
-    
+
     // Report progress to user
     onProgress?.(`Reviewing code (${focus} focus)...`);
-    
+
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.GEMINI_RESPONSE}
+    return `${STATUS_MESSAGES.QWEN_RESPONSE}
 ${result}`;
   }
 };
@@ -162,14 +162,14 @@ export const refactorCodeTool: UnifiedTool = {
   prompt: {
     description: "Refactor code to improve its quality",
   },
-  category: 'gemini',
+  category: 'qwen',
   execute: async (args, onProgress) => {
     const { code, language, goal, model } = args;
-    
+
     if (!code || (typeof code === 'string' && !code.trim())) {
       throw new Error("You must provide code to refactor");
     }
-    
+
     let prompt = `# CODE REFACTORING REQUEST
 
 ## Code to Refactor
@@ -177,14 +177,14 @@ export const refactorCodeTool: UnifiedTool = {
 ${code}
 \`\`\`
 `;
-    
+
     if (goal) {
       prompt += `
 ## Refactoring Goal
 ${goal}
 `;
     }
-    
+
     prompt += `
 ## Instructions
 Please refactor the code above to improve its quality. Focus on:
@@ -206,13 +206,13 @@ OLD:
 NEW:
 [new code to insert - complete and functional]
 \`\`\``;
-    
+
     // Report progress to user
     onProgress?.(`Refactoring code${goal ? ` with goal: ${goal}` : ''}...`);
-    
+
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, true, onProgress);
-    return `${STATUS_MESSAGES.GEMINI_RESPONSE}
+    return `${STATUS_MESSAGES.QWEN_RESPONSE}
 ${result}`;
   }
 };
@@ -232,14 +232,14 @@ export const explainCodeTool: UnifiedTool = {
   prompt: {
     description: "Explain what a piece of code does",
   },
-  category: 'gemini',
+  category: 'qwen',
   execute: async (args, onProgress) => {
     const { code, language, detailLevel, model } = args;
-    
+
     if (!code || (typeof code === 'string' && !code.trim())) {
       throw new Error("You must provide code to explain");
     }
-    
+
     let prompt = `# CODE EXPLANATION REQUEST
 
 ## Code to Explain
@@ -247,12 +247,12 @@ export const explainCodeTool: UnifiedTool = {
 ${code}
 \`\`\`
 `;
-    
+
     prompt += `
 ## Detail Level
 ${detailLevel}
 `;
-    
+
     prompt += `
 ## Instructions
 Please explain the code above in a clear and understandable way. Your explanation should include:
@@ -263,13 +263,13 @@ Please explain the code above in a clear and understandable way. Your explanatio
 5. **Potential Use Cases**: Where and why this code might be used
 
 Structure your response in a way that would be helpful to someone learning the language or trying to understand this specific code.`;
-    
+
     // Report progress to user
     onProgress?.(`Explaining code (${detailLevel} level)...`);
-    
+
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.GEMINI_RESPONSE}
+    return `${STATUS_MESSAGES.QWEN_RESPONSE}
 ${result}`;
   }
 };

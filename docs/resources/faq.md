@@ -8,7 +8,7 @@ A bridge between Claude Desktop and Alibaba's Qwen AI, enabling you to use Qwen'
 ### Does it support windows?
 Windows testing is underway, some users have reported success and other failures.
 
-### Why use this instead of Gemini directly?
+### Why use this instead of Qwen directly?
 - Integrated into your existing AI workflow
 - File analysis with @ syntax
 - Reduced context switching (qwen can store and recall memories!)
@@ -16,7 +16,7 @@ Windows testing is underway, some users have reported success and other failures
 
 ### Is it free?
 The tool is open source and free. You need:
-- Gemini API key (has free tier) or Google Account
+- Qwen API key (has free tier) or Google Account
 - Claude Desktop or Claude Code or any MCP client
 
 ## Setup
@@ -41,12 +41,12 @@ It's how you reference files for analysis:
 - *new:* `file:index.html` now works, fully bypassing @ integration
 
 ### Can I analyze multiple files? What about ALL the files?
-Yes! Gemini's 1M token context allows analyzing entire codebases.
+Yes! Qwen's 1M token context allows analyzing entire codebases.
 
 ### Which model should I use?
-- **Daily work**: Gemini Pro
-- **Large analysis**: Gemini Pro
-- **Quick tasks**: Gemini Flash
+- **Daily work**: Qwen Plus
+- **Large analysis**: Qwen Plus
+- **Quick tasks**: Qwen Turbo
 
 ## Features
 
@@ -54,7 +54,7 @@ Yes! Gemini's 1M token context allows analyzing entire codebases.
 Any language code or human.
 
 ### Does it work offline?
-No, it requires internet to connect to Gemini API.
+No, it requires internet to connect to Qwen API.
 
 ## Troubleshooting
 
@@ -64,7 +64,7 @@ No, it requires internet to connect to Gemini API.
 - Check your internet connection
 
 ### Can I use my own models?
-Currently supports official Gemini models only.<br>
+Currently supports official Qwen models only.<br>
 *--> opencode integration coming soon*
 
 ### Can I add new features?
@@ -72,14 +72,14 @@ Yes! Check issues or propose your own ideas.
 
 ## Privacy & Security
 
-### Is my code sent to Google?
-Only when you explicitly use Gemini commands. Code is processed according to Google's privacy policy.
+### Is my code sent to Qwen?
+Only when you explicitly use Qwen commands. Code is processed according to the provider's privacy policy.
 
 ### Are credentials secure?
 - We never look at or touch your keys!
 
 ### Can I use this for proprietary code?
-Check your organization's policies and Google's Gemini API terms of service.
+Check your organization's policies and the Qwen API terms of service.
 
 ## Advanced
 
@@ -88,11 +88,11 @@ Not recommended - designed for interactive development.
 
 <div style="text-align: center;">
 
-## Why Gemini MCP?
+## Why Qwen MCP?
 
 </div>
 
-By bridging Claude Desktop with Google's powerful models, Gemini MCP Tool lets you leverage the following advanced capabilities right in your existing workflow:
+By bridging Claude Desktop with Qwen's powerful models, Qwen MCP Tool lets you leverage the following advanced capabilities right in your existing workflow:
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0;">
   <div style="background: var(--vp-c-bg-soft); padding: 16px; border-radius: 8px; border: 1px solid var(--vp-c-divider);">
@@ -124,5 +124,5 @@ By bridging Claude Desktop with Google's powerful models, Gemini MCP Tool lets y
 ## More Questions?
 
 - Check [Documentation](/)
-- Browse [GitHub Issues](https://github.com/jamubc/gemini-mcp-tool/issues)
-- Ask in [Discussions](https://github.com/jamubc/gemini-mcp-tool/discussions)
+- Browse [GitHub Issues](https://github.com/qwenlm/qwen-mcp-tool/issues)
+- Ask in [Discussions](https://github.com/qwenlm/qwen-mcp-tool/discussions)

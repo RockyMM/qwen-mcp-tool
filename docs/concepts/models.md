@@ -28,8 +28,8 @@ You can also append with '-m' or ask specifically with
 ```json
 {
   "mcpServers": {
-    "gemini-cli": {
-      "command": "gemini-mcp",
+    "qwen-code": {
+      "command": "qwen-mcp",
       "env": {
         "QWEN_MODEL": "qwen3-coder"
       }

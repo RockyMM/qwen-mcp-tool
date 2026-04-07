@@ -18,7 +18,7 @@ Ask qwen to explain @index.js by reading the entire codebase first
 Ask qwen to analyze @src/ and provide bug fixes
 ```
 ```
-Ask gemini what the weather is like in new york
+Ask qwen what the weather is like in new york
 ```
 ```
 ...then use qwen to review your recent modifications
@@ -45,7 +45,7 @@ analyze @main using qwen and determine the top 3 optimizations
 
 ## Why @ Syntax?
 
-- **Familiar**: Both Claude and Gemini natively support it
+- **Familiar**: Both Claude and Qwen natively support it
 - **Explicit**: Clear which files are being analyzed
 - **Flexible**: Works with single files, multiple files, or patterns
 

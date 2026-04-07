@@ -83,7 +83,7 @@ You must restart Claude Desktop ***completely*** for changes to take effect.
 :::
 ## Other MCP Clients
 
-Gemini MCP Tool works with 40+ MCP clients! Here are the common configuration patterns:
+Qwen MCP Tool works with 40+ MCP clients! Here are the common configuration patterns:
 
 ### STDIO Transport (Most Common)
 ```json
@@ -172,7 +172,7 @@ Qwen MCP Tool also provides specialized programming commands:
 
 ## Need a Different Client?
 
-Don't see your MCP client listed? Gemini MCP Tool uses standard MCP protocol and works with any compatible client.
+Don't see your MCP client listed? Qwen MCP Tool uses standard MCP protocol and works with any compatible client.
 
 ::: tip Find More MCP Clients
 - **Official List**: [modelcontextprotocol.io/clients](https://modelcontextprotocol.io/clients)
@@ -194,7 +194,7 @@ Make sure you've installed Qwen Code:
 1. Check your configuration file path
 2. Ensure JSON syntax is correct
 3. Restart your MCP client completely
-4. Verify Gemini CLI works: `gemini -help`
+4. Verify Qwen CLI works: `qwen -help`
 
 
 ### Client-Specific Issues
@@ -210,5 +210,5 @@ Now that you're set up:
 - Join the community for support
 
 ::: info Need Help?
-If you run into issues, [open an issue](https://github.com/jamubc/gemini-mcp-tool/issues) on GitHub.
+If you run into issues, [open an issue](https://github.com/qwenlm/qwen-mcp-tool/issues) on GitHub.
 :::

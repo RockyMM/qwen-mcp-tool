@@ -36,7 +36,7 @@ export async function executeCommand(
     // CLI level errors
     childProcess.stderr.on("data", (data) => {
       stderr += data.toString();
-      // find RESOURCE_EXHAUSTED when gemini-2.5-pro quota is exceeded
+      // find RESOURCE_EXHAUSTED when qwen-plus quota is exceeded
       if (stderr.includes("RESOURCE_EXHAUSTED")) {
         const modelMatch = stderr.match(/Quota exceeded for quota metric '([^']+)'/);
         const statusMatch = stderr.match(/status["\s]*[:=]\s*(\d+)/);
@@ -51,11 +51,11 @@ export async function executeCommand(
             details: {
               model: model,
               reason: reason,
-              statusText: "Too Many Requests -- > try using gemini-2.5-flash by asking",
+              statusText: "Too Many Requests -- > try using qwen-turbo by asking",
             }
           }
         };
-        Logger.error(`Gemini Quota Error: ${JSON.stringify(errorJson, null, 2)}`);
+        Logger.error(`Qwen Quota Error: ${JSON.stringify(errorJson, null, 2)}`);
       }
     });
     childProcess.on("error", (error) => {

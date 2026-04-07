@@ -124,17 +124,17 @@ For programming tasks:
 
 ### Combining Files and Questions
 ```
-/gemini-cli:analyze @package.json @src/index.js is the entry point configured correctly?
+/qwen-code:analyze @package.json @src/index.js is the entry point configured correctly?
 ```
 
 ### Complex Queries
 ```
-/gemini-cli:analyze @src/**/*.js @test/**/*.test.js what's the test coverage?
+/qwen-code:analyze @src/**/*.js @test/**/*..test.js what's the test coverage?
 ```
 
 ### Code Generation
 ```
-/gemini-cli:analyze @models/user.js generate TypeScript types for this model
+/qwen-code:analyze @models/user.js generate TypeScript types for this model
 ```
 
 ## Tips

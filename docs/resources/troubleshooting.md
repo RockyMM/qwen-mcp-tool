@@ -79,7 +79,7 @@ claude mcp add qwen-code -- npx qwen-mcp-tool
 ## Connection Issues
 
 <TroubleshootingModal 
-  title='"Failed to connect to Gemini"'
+  title='"Failed to connect to Qwen"'
   preview="API connection issues or authentication problems"
 >
 
@@ -119,7 +119,7 @@ claude mcp add qwen-code -- npx qwen-mcp-tool
 
 1. **Large files naturally take time** - Be patient with large file analysis
 
-2. **Switch to Gemini Flash for faster responses**:
+2. **Switch to Qwen Turbo for faster responses**:
    ```bash
    qwen config set model qwen3-coder
    ```
@@ -162,8 +162,8 @@ node --version
 qwen "Hello"
 
 # 3. Reinstall if needed
-npm uninstall -g gemini-mcp-tool
-npm install -g gemini-mcp-tool
+npm uninstall -g qwen-mcp-tool
+npm install -g qwen-mcp-tool
 
 # 4. Verify Claude Code can find the command
 claude mcp list
@@ -175,8 +175,8 @@ claude mcp list
 
 </TroubleshootingModal>
 
-### "Gemini gets cut off" / Early Termination
-**Problem**: Responses appear truncated or Claude reports "Gemini was thinking but got cut off"
+### "Qwen gets cut off" / Early Termination
+**Problem**: Responses appear truncated or Claude reports "Qwen was thinking but got cut off"
 
 **Causes**:
 - Large codebase analysis taking longer than expected
@@ -188,13 +188,13 @@ claude mcp list
 # The tool automatically prevents timeouts with progress updates
 # You'll see messages like:
 # "🔍 Starting analysis (may take 5-15 minutes for large codebases)"
-# "🧠 Gemini is analyzing your request..."
+# "🧠 Qwen is analyzing your request..."
 
-# Use faster Flash model for large requests
-/gemini-cli:analyze -m gemini-2.5-flash @large-file.js
+# Use faster Turbo model for large requests
+/qwen-code:analyze -m qwen-turbo @large-file.js
 
 # Break up large analysis into smaller chunks
-/gemini-cli:analyze @specific-function.js explain this function
+/qwen-code:analyze @specific-function.js explain this function
 ```
 
 ## File Analysis Issues
@@ -207,23 +207,22 @@ claude mcp list
 ### "Token limit exceeded" / "Response exceeds maximum allowed tokens (25000)"
 **Problem**: Error shows response of 45,735 tokens even for small prompts
 
-**Root cause**: Model-specific bug in `gemini-2.5-pro` (default model)
+**Root cause**: Model-specific bug in `qwen-plus` (default model)
 
 **Working models**:
-- ✅ `gemini-2.5-flash` - Works perfectly
-- ❌ `gemini-2.5-pro` - Always returns 45k+ tokens
-- ❌ `gemini-2.0-flash-thinking` - Model not found
+- ✅ `qwen-turbo` - Works perfectly
+- ❌ `qwen-plus` - Always returns 45k+ tokens
 
 **Solutions**:
 ```bash
-# Use Flash model (recommended)
-/gemini-cli:analyze -m gemini-2.5-flash "your prompt"
+# Use Turbo model (recommended)
+/qwen-code:analyze -m qwen-turbo "your prompt"
 
 # For large contexts, break into smaller chunks
-/gemini-cli:analyze -m gemini-2.5-flash @file1.js @file2.js
+/qwen-code:analyze -m qwen-turbo @file1.js @file2.js
 
-# Alternative: Use Pro for larger contexts when it works
-/gemini-cli:analyze -m gemini-2.5-pro "brief analysis only"
+# Alternative: Use Plus for larger contexts when it works
+/qwen-code:analyze -m qwen-plus "brief analysis only"
 ```
 
 ## Configuration Issues
@@ -232,13 +231,12 @@ claude mcp list
 1. Save config file
 2. Completely quit Claude Desktop
 3. Restart Claude Desktop
-4. Verify with `/gemini-cli:help`
+4. Verify with `/qwen-code:help`
 
 ### Environment variables not working
 ```bash
 # Check current settings
-echo $GEMINI_MODEL
-echo $GOOGLE_GENERATIVE_AI_API_KEY
+echo $QWEN_MODEL
 ```
 
 ### Configurable Timeout for Large Codebases
@@ -250,9 +248,9 @@ echo $GOOGLE_GENERATIVE_AI_API_KEY
 ```bash
 # The tool will automatically send progress messages like:
 # "🔍 Starting analysis (may take 5-15 minutes for large codebases)"
-# "🧠 Gemini is analyzing your request..."
+# "🧠 Qwen is analyzing your request..."
 # "📊 Processing files and generating insights..."
-# "⏳ Still processing... Gemini is working on your request"
+# "⏳ Still processing... Qwen is working on your request"
 ```
 
 **What happens during long operations**:
@@ -264,7 +262,7 @@ echo $GOOGLE_GENERATIVE_AI_API_KEY
 **For very large codebases** (10,000+ files):
 - Consider breaking analysis into smaller chunks
 - Use more specific file patterns with `@` syntax
-- Switch to `gemini-2.5-flash` for faster processing
+- Switch to `qwen-turbo` for faster processing
 ```
 
 ## Debug Mode
@@ -273,8 +271,8 @@ Enable debug logging:
 ```json
 {
   "mcpServers": {
-    "gemini-cli": {
-      "command": "gemini-mcp",
+    "qwen-code": {
+      "command": "qwen-mcp",
       "env": {
         "DEBUG": "true"
       }
@@ -285,43 +283,43 @@ Enable debug logging:
 
 ## Getting Help
 
-1. Check [GitHub Issues](https://github.com/jamubc/gemini-mcp-tool/issues)
+1. Check [GitHub Issues](https://github.com/qwenlm/qwen-mcp-tool/issues)
 2. Enable debug mode
 3. Collect error logs
 4. Open a new issue with details
 
 ## Model-Specific Issues
 
-### Gemini-2.5-Pro Issues
+### Qwen-Plus Issues
 **Known problems**:
 - Always returns 45,735 token responses (bug)
 - May cause "response exceeds limit" errors
 - Not recommended for file analysis
 
-**Workaround**: Use Gemini Flash instead
+**Workaround**: Use Turbo instead
 ```bash
-/gemini-cli:analyze -m gemini-2.5-flash "your prompt"
+/qwen-code:analyze -m qwen-turbo "your prompt"
 ```
 
 ### Model Recommendations
 | **Use Case** | **Recommended Model** | **Reason** |
 |--------------|----------------------|------------|
-| File analysis | `gemini-2.5-flash` | Faster, stable responses |
-| Code review | `gemini-2.5-flash` | Good balance of speed/quality |
-| Large codebase | `gemini-2.5-flash` | Better timeout handling |
-| Quick questions | `gemini-2.5-flash` | Fast responses |
+| File analysis | `qwen-turbo` | Faster, stable responses |
+| Code review | `qwen-turbo` | Good balance of speed/quality |
+| Large codebase | `qwen-turbo` | Better timeout handling |
+| Quick questions | `qwen-turbo` | Fast responses |
 
 ## Quick Fixes
 
 ### Reset Everything
 ```bash
 # Remove and reinstall
-npm uninstall -g gemini-mcp-tool
-npm install -g gemini-mcp-tool
+npm uninstall -g qwen-mcp-tool
+npm install -g qwen-mcp-tool
 
-# Reset Gemini CLI
-gemini config reset
-gemini config set api_key YOUR_API_KEY
+# Reset Qwen CLI
+qwen config reset
+qwen config set api_key YOUR_API_KEY
 ```
 
 ### Test Basic Functionality

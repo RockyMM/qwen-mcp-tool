@@ -15,7 +15,7 @@ Sandbox mode allows Qwen to write and test code in a secure, isolated environmen
 ## How It Works
 
 1. **Request** → You ask for code to be created/tested
-2. **Generation** → Gemini writes the code
+2. **Generation** → Qwen writes the code
 3. **Execution** → Code runs in isolated environment
 4. **Results** → Output returned safely
 

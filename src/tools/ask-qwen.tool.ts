@@ -22,7 +22,7 @@ export const askQwenTool: UnifiedTool = {
   prompt: {
     description: "Execute 'qwen -p <prompt>' to get Qwen AI's response. Supports enhanced change mode for structured edit suggestions.",
   },
-  category: 'gemini',
+  category: 'qwen',
   execute: async (args, onProgress) => {
     const { prompt, model, sandbox, changeMode, chunkIndex, chunkCacheKey } = args; if (!prompt?.trim()) { throw new Error(ERROR_MESSAGES.NO_PROMPT_PROVIDED); }
   
@@ -51,6 +51,6 @@ export const askQwenTool: UnifiedTool = {
         prompt as string
       );
     }
-    return `${STATUS_MESSAGES.GEMINI_RESPONSE}\n${result}`; // changeMode false
+    return `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result}`; // changeMode false
   }
 };

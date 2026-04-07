@@ -17,7 +17,7 @@ export const STATUS_MESSAGES = {
   FLASH_RETRY: "⚡ Retrying with Qwen Turbo...",
   FLASH_SUCCESS: "✅ Turbo model completed successfully",
   SANDBOX_EXECUTING: "🔒 Executing Qwen CLI command in sandbox mode...",
-  GEMINI_RESPONSE: "Qwen response:",
+  QWEN_RESPONSE: "Qwen response:",
   // Timeout prevention messages
   PROCESSING_START: "🔍 Starting analysis (may take 5-15 minutes for large codebases)",
   PROCESSING_CONTINUE: "⏳ Still processing... Qwen is working on your request",
@@ -61,7 +61,7 @@ export const PROTOCOL = {
 export const CLI = {
   // Command names
   COMMANDS: {
-    GEMINI: "qwen",
+    QWEN: "qwen",
     ECHO: "echo",
   },
   // Command flags
