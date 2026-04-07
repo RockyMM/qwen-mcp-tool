@@ -33,6 +33,6 @@ export const timeoutTestTool: UnifiedTool = {
     results.push(`Target duration: ${duration}ms`);
     results.push(`Actual duration: ${totalElapsed}ms`);
     
-    return results.join('\n');
+    return { text: results.join('\n') };
   }
 };

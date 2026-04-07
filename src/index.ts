@@ -179,12 +179,13 @@ function registerAllTools() {
             content: [
               {
                 type: "text",
-                text: result,
+                text: result.text,
               },
             ],
+            structuredContent: result.sessionId ? { sessionId: result.sessionId } : undefined,
             isError: false,
           };
-          
+
           return callResult;
         } catch (error) {
           // Stop progress updates on error

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { UnifiedTool } from './registry.js';
 import { Logger } from '../utils/logger.js';
 import { executeQwenCLI } from '../utils/qwenExecutor.js';
+import { STATUS_MESSAGES } from '../constants.js';
 
 function buildBrainstormPrompt(config: {
   prompt: string;
@@ -164,8 +165,9 @@ export const brainstormTool: UnifiedTool = {
     
     // Report progress to user
     onProgress?.(`Generating ${ideaCount} ideas via ${methodology} methodology...`);
-    
+
     // Execute with Qwen
-    return await executeQwenCLI(enhancedPrompt, model as string | undefined, false, false, onProgress);
+    const result = await executeQwenCLI(enhancedPrompt, model as string | undefined, false, false, onProgress);
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };

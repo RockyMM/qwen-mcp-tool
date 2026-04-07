@@ -18,7 +18,7 @@ export interface UnifiedTool {
     }>;
   };
   
-  execute: (args: ToolArguments, onProgress?: (newOutput: string) => void) => Promise<string>;
+  execute: (args: ToolArguments, onProgress?: (newOutput: string) => void) => Promise<{ text: string; sessionId?: string }>;
   category?: 'simple' | 'qwen' | 'utility';
 }
 
@@ -52,7 +52,7 @@ export function getPromptDefinitions(): Array<{name: string; description: string
     }));
 }
 
-export async function executeTool(toolName: string, args: ToolArguments, onProgress?: (newOutput: string) => void): Promise<string> {
+export async function executeTool(toolName: string, args: ToolArguments, onProgress?: (newOutput: string) => void): Promise<{ text: string; sessionId?: string }> {
   const tool = toolRegistry.find(t => t.name === toolName);
   if (!tool) { throw new Error(`Unknown tool: ${toolName}`); } try { const validatedArgs = tool.zodSchema.parse(args);
     return tool.execute(validatedArgs, onProgress);

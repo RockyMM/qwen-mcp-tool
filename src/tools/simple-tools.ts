@@ -16,7 +16,8 @@ export const pingTool: UnifiedTool = {
   category: 'simple',
   execute: async (args, onProgress) => {
     const message = args.prompt || args.message || "Pong!";
-    return executeCommand("echo", [message as string], onProgress);
+    const output = await executeCommand("echo", [message as string], onProgress);
+    return { text: output };
   }
 };
 
@@ -31,6 +32,7 @@ export const helpTool: UnifiedTool = {
   },
   category: 'simple',
   execute: async (args, onProgress) => {
-    return executeCommand("qwen", ["-help"], onProgress);
+    const output = await executeCommand("qwen", ["-help"], onProgress);
+    return { text: output };
   }
 };

@@ -72,8 +72,7 @@ Follow best practices for the chosen language and framework. Ensure the code is 
 
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.QWEN_RESPONSE}
-${result}`;
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };
 
@@ -142,8 +141,7 @@ If the code is good and you find no issues in the specified focus areas, please 
 
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.QWEN_RESPONSE}
-${result}`;
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };
 
@@ -212,8 +210,7 @@ NEW:
 
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, true, onProgress);
-    return `${STATUS_MESSAGES.QWEN_RESPONSE}
-${result}`;
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };
 
@@ -269,7 +266,6 @@ Structure your response in a way that would be helpful to someone learning the l
 
     // Execute with Qwen
     const result = await executeQwenCLI(prompt, model as string | undefined, false, false, onProgress);
-    return `${STATUS_MESSAGES.QWEN_RESPONSE}
-${result}`;
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };

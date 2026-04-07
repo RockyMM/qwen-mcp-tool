@@ -25,16 +25,16 @@ export const askQwenTool: UnifiedTool = {
   category: 'qwen',
   execute: async (args, onProgress) => {
     const { prompt, model, sandbox, changeMode, chunkIndex, chunkCacheKey } = args; if (!prompt?.trim()) { throw new Error(ERROR_MESSAGES.NO_PROMPT_PROVIDED); }
-  
+
     if (changeMode && chunkIndex && chunkCacheKey) {
-      return processChangeModeOutput(
-        '', // empty for cache...
+      return { text: await processChangeModeOutput(
+        '',
         chunkIndex as number,
         chunkCacheKey as string,
         prompt as string
-      );
+      )};
     }
-    
+
     const result = await executeQwenCLI(
       prompt as string,
       model as string | undefined,
@@ -42,15 +42,18 @@ export const askQwenTool: UnifiedTool = {
       !!changeMode,
       onProgress
     );
-    
+
     if (changeMode) {
-      return processChangeModeOutput(
-        result,
-        args.chunkIndex as number | undefined,
-        undefined,
-        prompt as string
-      );
+      return {
+        text: await processChangeModeOutput(
+          result.output,
+          args.chunkIndex as number | undefined,
+          undefined,
+          prompt as string
+        ),
+        sessionId: result.sessionId
+      };
     }
-    return `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result}`; // changeMode false
+    return { text: `${STATUS_MESSAGES.QWEN_RESPONSE}\n${result.output}`, sessionId: result.sessionId };
   }
 };

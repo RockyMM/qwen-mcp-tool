@@ -30,6 +30,6 @@ export const testTool: UnifiedTool = {
   },
   category: 'utility',
   execute: async (args) => {
-    return `Test tool received: ${args.message}`;
+    return { text: `Test tool received: ${args.message}` };
   }
 };
