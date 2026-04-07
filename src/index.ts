@@ -1,41 +1,29 @@
 #!/usr/bin/env node
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  ListPromptsRequestSchema,
-  GetPromptRequestSchema,
-  CallToolRequest,
-  ListToolsRequest,
-  ListPromptsRequest,
-  GetPromptRequest,
-  Tool,
-  Prompt,
-  GetPromptResult,
   CallToolResult,
 } from "@modelcontextprotocol/sdk/types.js";
 import { Logger } from "./utils/logger.js";
 import { PROTOCOL, ToolArguments } from "./constants.js";
 
-import { 
-  getToolDefinitions, 
-  getPromptDefinitions, 
-  executeTool, 
-  toolExists, 
-  getPromptMessage 
+import {
+  getToolDefinitions,
+  getPromptDefinitions,
+  executeTool,
+  toolExists,
+  getPromptMessage,
+  UnifiedTool
 } from "./tools/index.js";
 
-const server = new Server(
+const server = new McpServer(
   {
     name: "qwen-cli-mcp",
     version: "0.0.1",
-  },{
+  },
+  {
     capabilities: {
-      tools: {},
-      prompts: {},
-      notifications: {},
       logging: {},
     },
   },
@@ -45,7 +33,7 @@ let isProcessing = false; let currentOperationName = ""; let latestOutput = "";
 
 async function sendNotification(method: string, params: any) {
   try {
-    await server.notification({ method, params });
+    await server.server.notification({ method, params });
   } catch (error) {
     Logger.error("notification failed: ", error);
   }
@@ -64,17 +52,17 @@ async function sendProgressNotification(
   message?: string
 ) {
   if (!progressToken) return; // Only send if client requested progress
-  
+
   try {
     const params: any = {
       progressToken,
       progress
     };
-    
+
     if (total !== undefined) params.total = total; // future cache progress
     if (message) params.message = message;
-    
-    await server.notification({
+
+    await server.server.notification({
       method: PROTOCOL.NOTIFICATIONS.PROGRESS,
       params
     });
@@ -90,7 +78,7 @@ function startProgressUpdates(
   isProcessing = true;
   currentOperationName = operationName;
   latestOutput = ""; // Reset latest output
-  
+
   const progressMessages = [
     `🧠 ${operationName} - Qwen is analyzing your request...`,
     `📊 ${operationName} - Processing files and generating insights...`,
@@ -98,10 +86,10 @@ function startProgressUpdates(
     `⏱️ ${operationName} - Large analysis in progress (this is normal for big requests)...`,
     `🔍 ${operationName} - Still working... Qwen takes time for quality results...`,
   ];
-  
+
   let messageIndex = 0;
   let progress = 0;
-  
+
   // Send immediate acknowledgment if progress requested
   if (progressToken) {
     sendProgressNotification(
@@ -111,20 +99,20 @@ function startProgressUpdates(
       `🔍 Starting ${operationName}`
     );
   }
-  
+
   // Keep client alive with periodic updates
   const progressInterval = setInterval(async () => {
     if (isProcessing && progressToken) {
       // Simply increment progress value
       progress += 1;
-      
+
       // Include latest output if available
       const baseMessage = progressMessages[messageIndex % progressMessages.length];
       const outputPreview = latestOutput.slice(-150).trim(); // Last 150 chars
-      const message = outputPreview 
+      const message = outputPreview
         ? `${baseMessage}\n📝 Output: ...${outputPreview}`
         : baseMessage;
-      
+
       await sendProgressNotification(
         progressToken,
         progress,
@@ -136,7 +124,7 @@ function startProgressUpdates(
       clearInterval(progressInterval);
     }
   }, PROTOCOL.KEEPALIVE_INTERVAL); // Every 25 seconds
-  
+
   return { interval: progressInterval, progressToken };
 }
 
@@ -148,7 +136,7 @@ function stopProgressUpdates(
   isProcessing = false;
   currentOperationName = "";
   clearInterval(progressData.interval);
-  
+
   // Send final progress notification if client requested progress
   if (progressData.progressToken) {
     sendProgressNotification(
@@ -160,99 +148,115 @@ function stopProgressUpdates(
   }
 }
 
-// tools/list
-server.setRequestHandler(ListToolsRequestSchema, async (request: ListToolsRequest): Promise<{ tools: Tool[] }> => {
-  return { tools: getToolDefinitions() as unknown as Tool[] };
-});
-
-// tools/get
-server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest): Promise<CallToolResult> => {
-  const toolName: string = request.params.name;
-
-  if (toolExists(toolName)) {
-    // Check if client requested progress updates
-    const progressToken = (request.params as any)._meta?.progressToken;
-    
-    // Start progress updates if client requested them
-    const progressData = startProgressUpdates(toolName, progressToken);
-    
-    try {
-      // Get prompt and other parameters from arguments with proper typing
-      const args: ToolArguments = (request.params.arguments as ToolArguments) || {};
-
-      Logger.toolInvocation(toolName, request.params.arguments);
-
-      // Execute the tool using the unified registry with progress callback
-      const result = await executeTool(toolName, args, (newOutput) => {
-        latestOutput = newOutput;
-      });
-
-      // Stop progress updates
-      stopProgressUpdates(progressData, true);
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: result,
-          },
-        ],
-        isError: false,
-      };
-    } catch (error) {
-      // Stop progress updates on error
-      stopProgressUpdates(progressData, false);
-      
-      Logger.error(`Error in tool '${toolName}':`, error);
-
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error executing ${toolName}: ${errorMessage}`,
-          },
-        ],
-        isError: true,
-      };
-    }
-  } else {
-    throw new Error(`Unknown tool: ${request.params.name}`);
-  }
-});
-
-// prompts/list
-server.setRequestHandler(ListPromptsRequestSchema, async (request: ListPromptsRequest): Promise<{ prompts: Prompt[] }> => {
-  return { prompts: getPromptDefinitions() as unknown as Prompt[] };
-});
-
-// prompts/get
-server.setRequestHandler(GetPromptRequestSchema, async (request: GetPromptRequest): Promise<GetPromptResult> => {
-  const promptName = request.params.name;
-  const args = request.params.arguments || {};
+// Register all tools using McpServer API
+function registerAllTools() {
+  const tools = getToolDefinitions();
   
-  const promptMessage = getPromptMessage(promptName, args);
-  
-  if (!promptMessage) {
-    throw new Error(`Unknown prompt: ${promptName}`);
-  }
-  
-  return { 
-    messages: [{
-      role: "user" as const,
-      content: {
-        type: "text" as const,
-        text: promptMessage
+  tools.forEach((tool: UnifiedTool) => {
+    server.registerTool(
+      tool.name,
+      {
+        description: tool.description,
+        inputSchema: tool.zodSchema,
+      },
+      async (args: ToolArguments) => {
+        // Check if client requested progress updates
+        const progressToken = (args as any)._meta?.progressToken;
+
+        // Start progress updates if client requested them
+        const progressData = startProgressUpdates(tool.name, progressToken);
+
+        try {
+          // Execute the tool using the unified registry with progress callback
+          const result = await executeTool(tool.name, args, (newOutput) => {
+            latestOutput = newOutput;
+          });
+
+          // Stop progress updates
+          stopProgressUpdates(progressData, true);
+
+          const callResult: CallToolResult = {
+            content: [
+              {
+                type: "text",
+                text: result,
+              },
+            ],
+            isError: false,
+          };
+          
+          return callResult;
+        } catch (error) {
+          // Stop progress updates on error
+          stopProgressUpdates(progressData, false);
+
+          Logger.error(`Error in tool '${tool.name}':`, error);
+
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+          const callResult: CallToolResult = {
+            content: [
+              {
+                type: "text",
+                text: `Error executing ${tool.name}: ${errorMessage}`,
+              },
+            ],
+            isError: true,
+          };
+          
+          return callResult;
+        }
       }
-    }]
-  };
-});
+    );
+  });
+}
+
+// Register all prompts using McpServer API
+function registerAllPrompts() {
+  const prompts = getPromptDefinitions();
+  
+  prompts.forEach((prompt) => {
+    server.registerPrompt(
+      prompt.name,
+      {
+        description: prompt.description,
+        argsSchema: {}, // Empty schema as prompts are retrieved dynamically
+      },
+      async (args) => {
+        const promptMessage = getPromptMessage(prompt.name, args);
+        
+        if (!promptMessage) {
+          throw new Error(`Unknown prompt: ${prompt.name}`);
+        }
+        
+        return {
+          messages: [{
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: promptMessage
+            }
+          }]
+        };
+      }
+    );
+  });
+}
+
+// Initialize tools and prompts
+registerAllTools();
+registerAllPrompts();
 
 // Start the server
 async function main() {
   Logger.debug("init qwen-mcp-tool");
-  const transport = new StdioServerTransport(); await server.connect(transport);
+  const transport = new StdioServerTransport(); 
+  await server.connect(transport);
   Logger.debug("qwen-mcp-tool listening on stdio");
-} main().catch((error) => {Logger.error("Fatal error:", error); process.exit(1); }); 
+} 
+
+main().catch((error) => {
+  Logger.error("Fatal error:", error); 
+  process.exit(1); 
+});

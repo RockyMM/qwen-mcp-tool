@@ -1,4 +1,4 @@
-import { Tool, Prompt } from "@modelcontextprotocol/sdk/types.js"; // Each tool definition includes its metadata, schema, prompt, and execution logic in one place.
+// Each tool definition includes its metadata, schema, prompt, and execution logic in one place.
 
 import { ToolArguments } from "../constants.js";
 import { ZodTypeAny, ZodError } from "zod";
@@ -26,22 +26,8 @@ export const toolRegistry: UnifiedTool[] = [];
 export function toolExists(toolName: string): boolean {
   return toolRegistry.some(t => t.name === toolName);
 }
-export function getToolDefinitions(): Tool[] { // get Tool definitions from registry
-  return toolRegistry.map(tool => {
-    const raw = zodToJsonSchema(tool.zodSchema, tool.name) as any;
-    const def = raw.definitions?.[tool.name] ?? raw;
-    const inputSchema: Tool['inputSchema'] = {
-      type: "object",
-      properties: def.properties || {},
-      required: def.required || [],
-    };
-    
-    return {
-      name: tool.name,
-      description: tool.description,
-      inputSchema,
-    };
-  });
+export function getToolDefinitions(): UnifiedTool[] { // get UnifiedTool objects from registry
+  return toolRegistry;
 }
 
 function extractPromptArguments(zodSchema: ZodTypeAny): Array<{name: string; description: string; required: boolean}> {
@@ -56,7 +42,7 @@ function extractPromptArguments(zodSchema: ZodTypeAny): Array<{name: string; des
   }));
 }
 
-export function getPromptDefinitions(): Prompt[] { // Helper to get MCP Prompt definitions from registry
+export function getPromptDefinitions(): Array<{name: string; description: string; arguments: Array<{name: string; description: string; required: boolean}>}> { // Helper to get prompt definitions from registry
   return toolRegistry
     .filter(tool => tool.prompt)
     .map(tool => ({
